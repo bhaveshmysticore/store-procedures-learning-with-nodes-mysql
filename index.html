@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stored Procedures Guide</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      background: #f5f7fb;
+      color: #333;
+    }
+    h1, h2, h3 {
+      color: #1a73e8;
+    }
+    pre {
+      background: #0d1117;
+      color: #e6edf3;
+      padding: 12px;
+      overflow-x: auto;
+      border-radius: 8px;
+    }
+    section {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    ul {
+      margin-left: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Stored Procedures Guide</h1>
+
+<!-- ================================= -->
+<section>
+  <h2>Part 1: Stored Procedures (Beginner → Advanced)</h2>
+
+  <h3>What is a Stored Procedure?</h3>
+  <p>A stored procedure is a saved SQL program inside the database that you can call anytime.</p>
+
+  <h3>Why use it?</h3>
+  <ul>
+    <li>Reuse logic</li>
+    <li>Improve performance</li>
+    <li>Secure business logic</li>
+    <li>Reduce duplicate code</li>
+  </ul>
+
+  <h3>Beginner Example</h3>
+  <pre>
+DELIMITER $$
+
+CREATE PROCEDURE HelloWorld()
+BEGIN
+    SELECT 'Hello, World!' AS message;
+END$$
+
+DELIMITER ;
+  </pre>
+
+  <h3>Procedure with Input</h3>
+  <pre>
+CREATE PROCEDURE GetUserById(IN p_id INT)
+BEGIN
+    SELECT * FROM users WHERE id = p_id;
+END;
+  </pre>
+
+  <h3>Using Variables</h3>
+  <pre>
+CREATE PROCEDURE ExampleVar()
+BEGIN
+    DECLARE total INT;
+    SET total = 100;
+    SELECT total;
+END;
+  </pre>
+
+  <h3>IF Condition</h3>
+  <pre>
+CREATE PROCEDURE CheckAge(IN p_age INT)
+BEGIN
+    IF p_age >= 18 THEN
+        SELECT 'Adult';
+    ELSE
+        SELECT 'Minor';
+    END IF;
+END;
+  </pre>
+
+  <h3>Transaction Example</h3>
+  <pre>
+CREATE PROCEDURE TransferMoney(
+    IN from_id INT,
+    IN to_id INT,
+    IN amount DECIMAL(10,2)
+)
+BEGIN
+    START TRANSACTION;
+    UPDATE accounts SET balance = balance - amount WHERE id = from_id;
+    UPDATE accounts SET balance = balance + amount WHERE id = to_id;
+    COMMIT;
+END;
+  </pre>
+
+  <h3>Error Handling</h3>
+  <pre>
+CREATE PROCEDURE SafeInsert()
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error occurred';
+    END;
+
+    START TRANSACTION;
+    INSERT INTO users(name) VALUES('Test');
+    COMMIT;
+END;
+  </pre>
+
+  <h3>Output Parameter</h3>
+  <pre>
+CREATE PROCEDURE GetUserCount(OUT total INT)
+BEGIN
+    SELECT COUNT(*) INTO total FROM users;
+END;
+  </pre>
+
+  <h3>Production Pattern</h3>
+  <pre>
+CREATE PROCEDURE Example()
+BEGIN
+    DECLARE variables;
+    DECLARE error handler;
+    validation;
+    START TRANSACTION;
+    main logic;
+    logging;
+    COMMIT;
+END;
+  </pre>
+
+</section>
+
+<!-- ================================= -->
+<section>
+  <h2>Part 2: Stored Procedures with Node.js Backend</h2>
+
+  <h3>Architecture Flow</h3>
+  <pre>
+Frontend → Node.js API → Stored Procedure → MySQL
+  </pre>
+
+  <h3>Step 1: MySQL Procedure</h3>
+  <pre>
+CREATE PROCEDURE SP_GetUserById(IN p_id INT)
+BEGIN
+    SELECT id, name, email
+    FROM users
+    WHERE id = p_id;
+END;
+  </pre>
+
+  <h3>Step 2: Install mysql2</h3>
+  <pre>
+npm install mysql2
+  </pre>
+
+  <h3>Step 3: Database Connection</h3>
+  <pre>
+// db.js
+const mysql = require("mysql2/promise");
+
+const db = mysql.createPool({
+  host: "localhost",
+  user: "root",
+  password: "password",
+  database: "mydb",
+});
+
+module.exports = db;
+  </pre>
+
+  <h3>Step 4: Call Procedure</h3>
+  <pre>
+// userService.js
+const db = require("./db");
+
+async function getUserById(id) {
+  const [rows] = await db.query("CALL SP_GetUserById(?)", [id]);
+  return rows[0];
+}
+  </pre>
+
+  <h3>Express API Example</h3>
+  <pre>
+// server.js
+const express = require("express");
+const { getUserById } = require("./userService");
+
+const app = express();
+
+app.get("/user/:id", async (req, res) => {
+  const user = await getUserById(req.params.id);
+  res.json(user);
+});
+
+app.listen(3000);
+  </pre>
+
+  <h3>Output Parameter Example</h3>
+  <pre>
+CREATE PROCEDURE SP_GetUserCount(OUT total INT)
+BEGIN
+    SELECT COUNT(*) INTO total FROM users;
+END;
+  </pre>
+
+  <pre>
+async function getUserCount() {
+  await db.query("CALL SP_GetUserCount(@total)");
+  const [[result]] = await db.query("SELECT @total AS total");
+  return result.total;
+}
+  </pre>
+
+  <h3>Best Practices</h3>
+  <ul>
+    <li>Use stored procedures for complex logic</li>
+    <li>Use transactions for data safety</li>
+    <li>Log important actions</li>
+    <li>Keep backend clean</li>
+  </ul>
+
+</section>
+
+</body>
+</html>
