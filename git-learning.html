@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Git Learning Guide</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 40px;
+      background: #f4f6f8;
+      color: #333;
+    }
+    h1, h2, h3 {
+      color: #2c3e50;
+    }
+    code {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    pre {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 15px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.08);
+    }
+    ul {
+      margin-left: 20px;
+    }
+    .tip {
+      background: #e8f4ff;
+      padding: 10px;
+      border-left: 5px solid #3498db;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+<h1>🚀 Git Learning Guide for Beginners</h1>
+
+<h2>What is Git?</h2>
+<p>Git is a Version Control System that helps you:</p>
+<ul>
+  <li>Track code changes</li>
+  <li>Collaborate with teams</li>
+  <li>Restore previous versions</li>
+  <li>Upload code to GitHub</li>
+</ul>
+
+<h2>Step 1: Install Git</h2>
+<pre>git --version</pre>
+
+<h2>Step 2: Configure Git</h2>
+<pre>
+git config --global user.name "Your Name"
+git config --global user.email "your@email.com"
+git config --list
+</pre>
+
+<h2>Step 3: Initialize Git</h2>
+<pre>git init</pre>
+
+<h2>Basic Workflow</h2>
+<p><b>Working → Staging → Commit → GitHub</b></p>
+
+<h3>Check Status</h3>
+<pre>git status</pre>
+
+<h3>Add Files</h3>
+<pre>
+git add index.js
+git add .
+</pre>
+
+<h3>Commit</h3>
+<pre>git commit -m "Added login feature"</pre>
+
+<h2>Connect to GitHub</h2>
+<pre>
+git remote add origin https://github.com/username/repo.git
+git branch -M main
+git push -u origin main
+</pre>
+
+<h2>Daily Commands</h2>
+<pre>
+git pull
+git push
+git checkout -b feature-login
+git checkout main
+</pre>
+
+<hr>
+
+<h1>🏢 Working in a Team Project</h1>
+
+<h2>Step 1: Clone Project</h2>
+<pre>
+git clone https://github.com/company/project.git
+cd project
+</pre>
+
+<h2>Step 2: Never Work on Main</h2>
+<pre>
+git checkout main
+git pull origin main
+</pre>
+
+<h2>Step 3: Create Your Branch</h2>
+<pre>git checkout -b feature/login-page</pre>
+
+<h2>Step 4: Work & Commit</h2>
+<pre>
+git add .
+git commit -m "feat: added login page UI"
+</pre>
+
+<h2>Step 5: Push Branch</h2>
+<pre>git push origin feature/login-page</pre>
+
+<h2>Step 6: Create Pull Request</h2>
+<p>Create a PR on GitHub for review and merge.</p>
+
+<h2>Step 7: Keep Branch Updated</h2>
+<pre>
+git checkout main
+git pull origin main
+git checkout feature/login-page
+git merge main
+</pre>
+
+<h2>Merge Conflict Example</h2>
+<pre>
+<<<<<<< HEAD
+your code
+=======
+other developer code
+>>>>>>> main
+</pre>
+
+<h2>Daily Team Workflow</h2>
+<pre>
+1. git pull origin main
+2. git checkout -b feature/your-task
+3. Work & commit
+4. git push origin feature/your-task
+5. Create Pull Request
+</pre>
+
+<h2>Team Rules</h2>
+<ul>
+  <li>Never push directly to main</li>
+  <li>Use branches for each task</li>
+  <li>Pull latest code before working</li>
+  <li>Write clear commit messages</li>
+  <li>Resolve conflicts carefully</li>
+  <li>Test before pushing</li>
+</ul>
+
+<div class="tip">
+💡 Pro Tip: Commit often with meaningful messages like <b>fix: login validation bug</b>
+</div>
+
+<h2>Example Team Scenario</h2>
+<ul>
+  <li>Dev A → feature/login-api</li>
+  <li>You → feature/login-ui</li>
+</ul>
+
+<h2>Next Topics to Learn</h2>
+<ul>
+  <li>Pull Requests</li>
+  <li>Merge vs Rebase</li>
+  <li>Conflict Resolution</li>
+  <li>Branch Naming</li>
+  <li>Code Reviews</li>
+</ul>
+
+</div>
+</body>
+</html>
